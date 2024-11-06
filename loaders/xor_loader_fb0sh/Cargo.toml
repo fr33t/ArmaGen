@@ -1,0 +1,15 @@
+[package]
+name = "xor_loader_fb0sh"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+base64 = "0.22.1"
+winapi = { version = "0.3.9", features = [
+    "winuser",
+    "processthreadsapi",
+    "memoryapi",
+    "errhandlingapi",
+    "synchapi",
+] }

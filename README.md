@@ -5,3 +5,8 @@
 ## concept
 
 ![ArmaGen concept](./concept.svg)
+
+
+参数传递
+
+环境变量
