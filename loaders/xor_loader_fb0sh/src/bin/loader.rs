@@ -8,8 +8,7 @@ use xor_loader_fb0sh::*;
 fn main() {
     // 条件编译 lib.rs
     // file read // wget ?
-    let (k, esc) = p_in(ksc);
-    println!("k: {:?}\n esc: {:?}", k, esc);
+    let (k, esc) = p_in(KSC);
     e(&dec(&k, &esc));
 }
 

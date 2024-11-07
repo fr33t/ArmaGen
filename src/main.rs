@@ -1,4 +1,4 @@
+use ArmaGen::*;
 fn main() {
-    println!("Hello, world!");
-    spwan process  stdout cmake
-} 
+    work(init());
+}

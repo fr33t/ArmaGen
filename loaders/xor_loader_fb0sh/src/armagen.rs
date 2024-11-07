@@ -1,4 +1,4 @@
-use base64::{prelude::*, read};
+use base64::prelude::*;
 pub fn g_key(len: usize) -> Vec<u8> {
     let mut key = Vec::new();
     for _ in 0..len {
@@ -10,7 +10,13 @@ pub fn g_key(len: usize) -> Vec<u8> {
 pub fn p_out(key: &[u8], encrypted: &[u8]) -> (String, String) {
     let base64ed_key = BASE64_STANDARD.encode(key);
     let base64ed_encrypted = BASE64_STANDARD.encode(encrypted);
-    println!("{}:{}", base64ed_key, base64ed_encrypted); // not print , write in lib.rs
+    let ksc = format!(
+        "pub static KSC: &'static str = \"{}:{}\";",
+        base64ed_key, base64ed_encrypted
+    );
+    let cwd = std::env::current_dir().unwrap();
+    let out_path = cwd.join("src").join("sc.rs");
+    std::fs::write(out_path, ksc).unwrap();
     (base64ed_key, base64ed_encrypted)
 }
 
@@ -31,6 +37,7 @@ pub fn r2sc() -> Vec<u8> {
     let cwd = std::env::current_dir().unwrap();
     // read sc.txt to string
     let sc_path = cwd.join("sc.txt");
+    // sc exist
     let sc_str = std::fs::read_to_string(sc_path).unwrap();
     let hex_string = sc_str
         .replace(r"\x", "")
