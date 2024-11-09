@@ -2,8 +2,8 @@ use serde::Deserialize;
 use std::fs::read_to_string;
 use std::io::Write;
 use std::path::PathBuf;
-use std::ptr::copy;
-use std::{i32, process};
+
+use std::process;
 use toml;
 
 #[derive(Deserialize, Debug)]
