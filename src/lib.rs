@@ -8,8 +8,8 @@ use toml;
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
+    seperated: bool,
     loader: String,
-    option: String,
     shellcode: String,
 }
 
@@ -24,7 +24,7 @@ fn load_config() -> Config {
     }
 }
 
-pub fn init() -> (PathBuf, String) {
+pub fn init() -> (PathBuf, Config) {
     let cwd = std::env::current_dir().unwrap();
     let config = load_config();
 
@@ -43,11 +43,11 @@ pub fn init() -> (PathBuf, String) {
     // close the file
     file.flush().unwrap();
 
-    (loader_path, config.loader)
+    (loader_path, config)
 }
 
-pub fn work(d: (PathBuf, String)) {
-    let (wd, loader) = d;
+pub fn work(d: (PathBuf, Config)) {
+    let (wd, config) = d;
     let previous_wd = std::env::current_dir().unwrap();
     std::env::set_current_dir(&wd).unwrap();
 
@@ -58,30 +58,52 @@ pub fn work(d: (PathBuf, String)) {
             "cargo.exe",
             "run",
             "--package",
-            &loader,
+            &config.loader,
             "--bin",
-            &loader,
+            &config.loader,
         ])
         .output()
         .unwrap();
 
-    process::Command::new("cmd.exe")
-        .args(&[
-            "/C",
-            "cargo.exe",
-            "build",
-            "--package",
-            &loader,
-            "--bin",
-            "loader",
-            "--release",
-        ])
-        .output()
-        .unwrap();
+    if config.seperated {
+        println!("[*] 已启用 seperated");
+        process::Command::new("cmd.exe")
+            .args(&[
+                "/C",
+                "cargo.exe",
+                "build",
+                "--features",
+                "seperated",
+                "--bin",
+                "loader",
+                "--release",
+            ])
+            .output()
+            .unwrap();
+    } else {
+        process::Command::new("cmd.exe")
+            .args(&[
+                "/C",
+                "cargo.exe",
+                "build",
+                "--package",
+                &config.loader,
+                "--bin",
+                "loader",
+                "--release",
+            ])
+            .output()
+            .unwrap();
+    };
 
     std::env::set_current_dir(previous_wd).unwrap();
 
     let target_path = wd.join("target").join("release").join("loader.exe");
     std::fs::copy(&target_path, "loader.exe").unwrap();
+    if config.seperated {
+        let target_path = wd.join("src").join("z.rs");
+        std::fs::copy(&target_path, "z.rs").unwrap();
+        println!("[+] z.rs 已在当前目录生成");
+    }
     println!("[+] loader.exe 已在当前目录生成");
 }
