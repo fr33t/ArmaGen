@@ -4,7 +4,7 @@ use toml;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
-    seperated: bool,
+    separated: bool,
     loader: String,
     payload: String,
 }
@@ -61,15 +61,15 @@ pub fn work(d: (PathBuf, Config)) {
         .output()
         .unwrap();
 
-    if config.seperated {
-        println!("[*] 已启用 seperated");
+    if config.separated {
+        println!("[*] 已启用 separated");
         process::Command::new("cmd.exe")
             .args(&[
                 "/C",
                 "cargo.exe",
                 "build",
                 "--features",
-                "seperated",
+                "separated",
                 "--bin",
                 "loader",
                 "--release",
@@ -96,7 +96,7 @@ pub fn work(d: (PathBuf, Config)) {
 
     let target_path = wd.join("target").join("release").join("loader.exe");
     std::fs::copy(&target_path, "loader.exe").unwrap();
-    if config.seperated {
+    if config.separated {
         let target_path = wd.join("src").join("z.rs");
         std::fs::copy(&target_path, "z.rs").unwrap();
         println!("[+] z.rs 已在当前目录生成");
