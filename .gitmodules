@@ -1,6 +1,8 @@
 [submodule "loaders/xor_armagen_loader_fb0sh"]
 	path = loaders/xor_armagen_loader_fb0sh
 	url = https://github.com/fb0sh/xor_armagen_loader_fb0sh.git
+	branch = main
 [submodule "loaders/empty_armagen_loader_author"]
 	path = loaders/empty_armagen_loader_author
 	url = https://github.com/fr33t/empty_armagen_loader_author
+	branch = main
