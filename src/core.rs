@@ -1,6 +1,7 @@
 pub use serde::{Deserialize, Serialize};
 pub use std::fmt::Debug;
 
+#[macro_export]
 macro_rules! to_hex_bytes {
     ($data:expr) => {{
         $data
@@ -12,6 +13,7 @@ macro_rules! to_hex_bytes {
     }};
 }
 
+#[macro_export]
 macro_rules! generate_const_struct_code {
     ($struct_name:ident, $const_name:ident, $instance:expr) => {{
         let code = format!(
