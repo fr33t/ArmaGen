@@ -56,7 +56,7 @@ pub fn work(d: (PathBuf, Config)) {
             "--package",
             &config.loader,
             "--bin",
-            &config.loader,
+            "gen",
         ])
         .output()
         .unwrap();
@@ -93,13 +93,18 @@ pub fn work(d: (PathBuf, Config)) {
     };
 
     std::env::set_current_dir(previous_wd).unwrap();
+    let output_path = PathBuf::from("./output");
+    if !output_path.exists() {
+        std::fs::create_dir(output_path.clone()).unwrap();
+    }
 
     let target_path = wd.join("target").join("release").join("loader.exe");
-    std::fs::copy(&target_path, "loader.exe").unwrap();
+
+    std::fs::copy(&target_path, &output_path.join("loader.exe")).unwrap();
     if config.separated {
-        let target_path = wd.join("src").join("z.rs");
-        std::fs::copy(&target_path, "z.rs").unwrap();
-        println!("[+] z.rs 已在当前目录生成");
+        let target_path = wd.join("src").join("bin").join("z.rs");
+        std::fs::copy(&target_path, &output_path.join("z.rs")).unwrap();
+        println!("[+] z.rs 已在output目录生成");
     }
-    println!("[+] loader.exe 已在当前目录生成");
+    println!("[+] loader.exe 已在output目录生成");
 }
