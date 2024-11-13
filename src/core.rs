@@ -1,6 +1,17 @@
 pub use serde::{Deserialize, Serialize};
 pub use std::fmt::Debug;
 
+macro_rules! to_hex_bytes {
+    ($data:expr) => {{
+        $data
+            .as_ref()
+            .iter()
+            .map(|byte| format!("\\x{:02x}", byte))
+            .collect::<Vec<String>>()
+            .join("")
+    }};
+}
+
 macro_rules! generate_const_struct_code {
     ($struct_name:ident, $const_name:ident, $instance:expr) => {{
         let code = format!(
