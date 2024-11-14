@@ -29,7 +29,7 @@ pub fn b2h(data: &[u8]) -> String {
 }
 
 pub fn h2b(h:&str) -> Vec<u8> {
-        let hex_string = sc_str
+        let hex_string = h
         .replace(r"\x", "")
         .replace(|c: char| !c.is_ascii_hexdigit(), "");
 
