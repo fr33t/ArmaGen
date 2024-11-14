@@ -2,18 +2,6 @@ pub use serde::{Deserialize, Serialize};
 pub use std::fmt::Debug;
 
 #[macro_export]
-macro_rules! to_hex_bytes {
-    ($data:expr) => {{
-        $data
-            .as_ref()
-            .iter()
-            .map(|byte| format!("\\x{:02x}", byte))
-            .collect::<Vec<String>>()
-            .join("")
-    }};
-}
-
-#[macro_export]
 macro_rules! generate_const_struct_code {
     ($struct_name:ident, $const_name:ident, $instance:expr) => {{
         let code = format!(
@@ -33,6 +21,33 @@ pub fn g_key(len: usize) -> Vec<u8> {
     key
 }
 
+pub fn b2h(data: &[u8]) -> String {
+    data.iter()
+        .map(|byte| format!("\\x{:02x}", byte))
+        .collect::<Vec<String>>()
+        .join("")
+}
+
+pub fn h2b(h:&str) -> Vec<u8> {
+        let hex_string = sc_str
+        .replace(r"\x", "")
+        .replace(|c: char| !c.is_ascii_hexdigit(), "");
+
+        // 确保长度是偶数，否则最后一个字节会不完整
+        if hex_string.len() % 2 != 0 {
+            eprintln!("Invalid hex string length.");
+            std::process::exit(1);
+        }
+        hex_string
+            .as_bytes()
+            .chunks(2)
+            .map(|chunk| {
+                let hex_pair = String::from_utf8_lossy(chunk);
+                u8::from_str_radix(&hex_pair, 16).unwrap()
+            })
+            .collect()
+}
+
 pub fn r2sc() -> Vec<u8> {
     // sc.txt
     let cwd = std::env::current_dir().unwrap();
@@ -40,27 +55,7 @@ pub fn r2sc() -> Vec<u8> {
     let sc_path = cwd.join("sc.txt");
     // sc exist
     let sc_str = std::fs::read_to_string(sc_path).unwrap();
-    let hex_string = sc_str
-        .replace(r"\x", "")
-        .replace(|c: char| !c.is_ascii_hexdigit(), "");
-
-    // 确保长度是偶数，否则最后一个字节会不完整
-    if hex_string.len() % 2 != 0 {
-        eprintln!("Invalid hex string length.");
-        std::process::exit(1);
-    }
-
-    // 将十六进制字符串转换为字节数组
-    let shellcode: Vec<u8> = hex_string
-        .as_bytes()
-        .chunks(2)
-        .map(|chunk| {
-            let hex_pair = String::from_utf8_lossy(chunk);
-            u8::from_str_radix(&hex_pair, 16).unwrap()
-        })
-        .collect();
-
-    shellcode
+    h2b(&sc_str)
 }
 
 pub trait Obfuscation: Default + Debug + Clone + Serialize + for<'de> Deserialize<'de> {
